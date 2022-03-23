@@ -43,9 +43,6 @@ const List = () => {
     {
       name: "Cool Beer",
     },
-    {
-      name: "Best hotel",
-    },
   ];
 
   return (
