@@ -16,6 +16,11 @@ const App = () => {
     sw: { lat: 42.34974491335828, lng: -71.06840705871585 },
   }); // 현재 브라우저 위치설정 끔 상태이기 때문에 초기값 설정
 
+  const fetchPlacesData = async (sw, ne) => {
+    const data = await getPlacesData(sw, ne);
+    setPlaces(data);
+  };
+
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       ({ coords: { latitude, longitude } }) => {
@@ -26,11 +31,6 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    async function fetchPlacesData(sw, ne) {
-      const data = await getPlacesData(sw, ne);
-      //   console.log(coordinates, bounds);
-      setPlaces(data);
-    }
     fetchPlacesData(bounds.sw, bounds.ne);
   }, [coordinates, bounds]);
 
@@ -47,6 +47,7 @@ const App = () => {
             coordinates={coordinates}
             setCoordinates={setCoordinates}
             setBounds={setBounds}
+            places={places}
           />
         </Grid>
       </Grid>

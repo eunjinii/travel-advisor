@@ -9,6 +9,7 @@ export default makeStyles(() => ({
     alignItems: "center",
     justifyContent: "space-between",
     marginTop: "10px",
+    textAlign: "right",
   },
   spacing: {
     display: "flex",

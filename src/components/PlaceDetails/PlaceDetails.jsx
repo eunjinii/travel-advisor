@@ -87,7 +87,6 @@ const PlaceDetails = ({ place }) => {
             color="primary"
             onClick={() => window.open(place.web_url, "_blank")}
           >
-            {" "}
             Trip Advisor
           </Button>
           <Button
@@ -95,7 +94,6 @@ const PlaceDetails = ({ place }) => {
             color="primary"
             onClick={() => window.open(place.website, "_blank")}
           >
-            {" "}
             Website
           </Button>
         </CardActions>
