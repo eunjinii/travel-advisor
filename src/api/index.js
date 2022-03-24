@@ -13,9 +13,9 @@ export const getPlacesData = async (sw, ne) => {
     const response = await axios.get(`${baseUrl}${path}`, {
       params: {
         bl_latitude: sw.lat,
-        tr_latitude: sw.lng,
-        bl_longitude: ne.lat,
+        bl_longitude: sw.lng,
         tr_longitude: ne.lng,
+        tr_latitude: ne.lat,
       },
       headers,
     });

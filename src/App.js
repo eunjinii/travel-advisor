@@ -7,14 +7,8 @@ import { getPlacesData } from "./api";
 
 const App = () => {
   const [places, setPlaces] = useState([]);
-  const [coordinates, setCoordinates] = useState({
-    lat: 42.37010356647633,
-    lng: -71.03982543945315,
-  });
-  const [bounds, setBounds] = useState({
-    ne: { lat: 42.39045562314777, lng: -71.01124382019046 },
-    sw: { lat: 42.34974491335828, lng: -71.06840705871585 },
-  }); // 현재 브라우저 위치설정 끔 상태이기 때문에 초기값 설정
+  const [coordinates, setCoordinates] = useState({}); // {lat:0, lng:0}
+  const [bounds, setBounds] = useState(null); //{ne: { lat: 0, lng: 0 },sw: { lat: 0, lng: 0 },}
 
   const fetchPlacesData = async (sw, ne) => {
     const data = await getPlacesData(sw, ne);
@@ -22,17 +16,19 @@ const App = () => {
   };
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      ({ coords: { latitude, longitude } }) => {
-        console.log("lat lng", latitude, longitude);
-        setCoordinates({ lat: latitude, lng: longitude });
-      }
-    );
+    // 브라우저 위치 켬 상태여야 구동 가능
+    navigator.geolocation.getCurrentPosition((position) => {
+      setCoordinates({
+        lat: position?.coords.latitude || 37.36994428541982,
+        lng: position?.coords.longitude || 127.10542780571177,
+      });
+    });
   }, []);
 
   useEffect(() => {
+    if (!bounds) return;
     fetchPlacesData(bounds.sw, bounds.ne);
-  }, [coordinates, bounds]);
+  }, [bounds]);
 
   return (
     <>
