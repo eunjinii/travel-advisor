@@ -30,8 +30,6 @@ const Map = ({
         margin={[10, 10, 10, 10]}
         // options={}
         onChange={(e) => {
-          console.log("Map onChange center ====== ", e.center);
-          console.log("Map onChange marginBounds ====== ", e.marginBounds);
           setCoordinates({ lat: e.center.lat, lng: e.center.lng });
           setBounds({ ne: e.marginBounds.ne, sw: e.marginBounds.sw });
         }}

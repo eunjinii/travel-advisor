@@ -9,15 +9,18 @@ const App = () => {
   const [places, setPlaces] = useState([]);
   const [filteredPlaces, setFilteredPlaces] = useState([]);
   const [coordinates, setCoordinates] = useState({}); // {lat:0, lng:0}
-  const [bounds, setBounds] = useState(null); //{ne: { lat: 0, lng: 0 },sw: { lat: 0, lng: 0 },}
+  const [bounds, setBounds] = useState({}); //{ne: { lat: 0, lng: 0 },sw: { lat: 0, lng: 0 },}
   const [childClicked, setChildClicked] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [type, setType] = useState("restaurants");
   const [rating, setRating] = useState(0);
+  const [autocomplete, setAutocomplete] = useState(null);
 
   const fetchPlacesData = async (sw, ne) => {
     const data = await getPlacesData(type, sw, ne);
-    setPlaces(data?.filter((place) => place.name && place.num_reviews > 0));
+    const validPlaces =
+      data?.filter((place) => place.name && place.num_reviews > 0) ?? [];
+    setPlaces(validPlaces);
     setFilteredPlaces([]); // back to non-filtered state
     setIsLoading(false);
   };
@@ -27,14 +30,15 @@ const App = () => {
     // 브라우저 위치 켬 상태여야 구동 가능
     navigator.geolocation.getCurrentPosition((position) => {
       setCoordinates({
-        lat: position?.coords.latitude || 37.36994428541982,
-        lng: position?.coords.longitude || 127.10542780571177,
+        lat: position?.coords.latitude,
+        lng: position?.coords.longitude,
       });
     });
   }, []);
 
   useEffect(() => {
-    const filteredPlaces = places.filter((place) => place.rating > rating);
+    const filteredPlaces =
+      places?.filter((place) => place.rating > rating) ?? [];
     setFilteredPlaces(filteredPlaces);
   }, [rating]);
 
@@ -43,12 +47,21 @@ const App = () => {
 
     setIsLoading(true);
     fetchPlacesData(bounds.sw, bounds.ne);
-  }, [type, coordinates, bounds]);
+  }, [type, bounds]);
+
+  const onLoad = (autoC) => setAutocomplete(autoC);
+
+  const onPlaceChanged = () => {
+    const lat = autocomplete.getPlace().geometry.location.lat();
+    const lng = autocomplete.getPlace().geometry.location.lng();
+    console.log({ lat, lng });
+    setCoordinates({ lat, lng });
+  };
 
   return (
     <>
       <CssBaseline />
-      <Header setCoordinates={setCoordinates} />
+      <Header onLoad={onLoad} onPlaceChanged={onPlaceChanged} />
       <Grid container spacing={3} style={{ width: "100%" }}>
         <Grid item xs={12} md={4}>
           <List
