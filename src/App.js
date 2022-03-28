@@ -3,13 +3,16 @@ import { CssBaseline, Grid } from "@material-ui/core";
 import Header from "./components/Header/Header";
 import List from "./components/List/List";
 import Map from "./components/Map/Map";
-import { getPlacesData } from "./api";
+import { getPlacesData, getWeatherData } from "./api";
 
 const App = () => {
   const [places, setPlaces] = useState([]);
   const [filteredPlaces, setFilteredPlaces] = useState([]);
+  const [weatherData, setWeatherData] = useState({});
+
   const [coordinates, setCoordinates] = useState({}); // {lat:0, lng:0}
   const [bounds, setBounds] = useState({}); //{ne: { lat: 0, lng: 0 },sw: { lat: 0, lng: 0 },}
+
   const [childClicked, setChildClicked] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [type, setType] = useState("restaurants");
@@ -23,6 +26,11 @@ const App = () => {
     setPlaces(validPlaces);
     setFilteredPlaces([]); // back to non-filtered state
     setIsLoading(false);
+  };
+
+  const fetchWeatherData = async (lat, lng) => {
+    const data = await getWeatherData(lat, lng);
+    setWeatherData(data);
   };
 
   // happens only when the app starts
@@ -43,11 +51,12 @@ const App = () => {
   }, [rating]);
 
   useEffect(() => {
-    if (!(bounds.sw && bounds.ne)) return;
+    if (!(bounds.sw && bounds.ne && coordinates.lat && coordinates.lng)) return;
 
     setIsLoading(true);
+    fetchWeatherData(coordinates.lat, coordinates.lng);
     fetchPlacesData(bounds.sw, bounds.ne);
-  }, [type, bounds]);
+  }, [type, coordinates, bounds]);
 
   const onLoad = (autoC) => setAutocomplete(autoC);
 
@@ -81,6 +90,7 @@ const App = () => {
             setBounds={setBounds}
             places={filteredPlaces.length ? filteredPlaces : places}
             setChildClicked={setChildClicked}
+            weatherData={weatherData}
           />
         </Grid>
       </Grid>

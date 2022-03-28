@@ -12,6 +12,7 @@ const Map = ({
   setBounds,
   places,
   setChildClicked,
+  weatherData,
 }) => {
   const classes = useStyles();
   const isDesktop = useMediaQuery("(min-width:600px)");
@@ -76,6 +77,18 @@ const Map = ({
               </div>
             );
           })}
+        {weatherData?.weather?.map((data, idx) => (
+          <div
+            key={idx}
+            lat={weatherData.coord.lat}
+            lng={weatherData.coord.lon}
+          >
+            <img
+              src={`https://openweathermap.org/img/w/${data.icon}.png`}
+              alt={data.description}
+            />
+          </div>
+        ))}
       </GoogleMapReact>
     </div>
   );
