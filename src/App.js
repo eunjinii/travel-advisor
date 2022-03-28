@@ -17,7 +17,7 @@ const App = () => {
 
   const fetchPlacesData = async (sw, ne) => {
     const data = await getPlacesData(type, sw, ne);
-    setPlaces(data);
+    setPlaces(data?.filter((place) => place.name && place.num_reviews > 0));
     setFilteredPlaces([]); // back to non-filtered state
     setIsLoading(false);
   };
@@ -39,7 +39,8 @@ const App = () => {
   }, [rating]);
 
   useEffect(() => {
-    if (!bounds) return;
+    if (!(bounds.sw && bounds.ne)) return;
+
     setIsLoading(true);
     fetchPlacesData(bounds.sw, bounds.ne);
   }, [type, coordinates, bounds]);
@@ -47,7 +48,7 @@ const App = () => {
   return (
     <>
       <CssBaseline />
-      <Header />
+      <Header setCoordinates={setCoordinates} />
       <Grid container spacing={3} style={{ width: "100%" }}>
         <Grid item xs={12} md={4}>
           <List
