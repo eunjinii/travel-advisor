@@ -9,10 +9,13 @@ const App = () => {
   const [places, setPlaces] = useState([]);
   const [coordinates, setCoordinates] = useState({}); // {lat:0, lng:0}
   const [bounds, setBounds] = useState(null); //{ne: { lat: 0, lng: 0 },sw: { lat: 0, lng: 0 },}
+  const [childClicked, setChildClicked] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchPlacesData = async (sw, ne) => {
     const data = await getPlacesData(sw, ne);
     setPlaces(data);
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -27,6 +30,7 @@ const App = () => {
 
   useEffect(() => {
     if (!bounds) return;
+    setIsLoading(true);
     fetchPlacesData(bounds.sw, bounds.ne);
   }, [bounds]);
 
@@ -36,7 +40,11 @@ const App = () => {
       <Header />
       <Grid container spacing={3} style={{ width: "100%" }}>
         <Grid item xs={12} md={4}>
-          <List places={places} />
+          <List
+            places={places}
+            childClicked={childClicked}
+            isLoading={isLoading}
+          />
         </Grid>
         <Grid item xs={12} md={8}>
           <Map
@@ -44,6 +52,7 @@ const App = () => {
             setCoordinates={setCoordinates}
             setBounds={setBounds}
             places={places}
+            setChildClicked={setChildClicked}
           />
         </Grid>
       </Grid>
