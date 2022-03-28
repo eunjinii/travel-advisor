@@ -7,6 +7,7 @@ import { getPlacesData } from "./api";
 
 const App = () => {
   const [places, setPlaces] = useState([]);
+  const [filteredPlaces, setFilteredPlaces] = useState([]);
   const [coordinates, setCoordinates] = useState({}); // {lat:0, lng:0}
   const [bounds, setBounds] = useState(null); //{ne: { lat: 0, lng: 0 },sw: { lat: 0, lng: 0 },}
   const [childClicked, setChildClicked] = useState(null);
@@ -17,9 +18,11 @@ const App = () => {
   const fetchPlacesData = async (sw, ne) => {
     const data = await getPlacesData(type, sw, ne);
     setPlaces(data);
+    setFilteredPlaces([]); // back to non-filtered state
     setIsLoading(false);
   };
 
+  // happens only when the app starts
   useEffect(() => {
     // 브라우저 위치 켬 상태여야 구동 가능
     navigator.geolocation.getCurrentPosition((position) => {
@@ -31,10 +34,15 @@ const App = () => {
   }, []);
 
   useEffect(() => {
+    const filteredPlaces = places.filter((place) => place.rating > rating);
+    setFilteredPlaces(filteredPlaces);
+  }, [rating]);
+
+  useEffect(() => {
     if (!bounds) return;
     setIsLoading(true);
     fetchPlacesData(bounds.sw, bounds.ne);
-  }, [type, bounds]);
+  }, [type, coordinates, bounds]);
 
   return (
     <>
@@ -43,7 +51,7 @@ const App = () => {
       <Grid container spacing={3} style={{ width: "100%" }}>
         <Grid item xs={12} md={4}>
           <List
-            places={places}
+            places={filteredPlaces.length ? filteredPlaces : places}
             childClicked={childClicked}
             isLoading={isLoading}
             type={type}
@@ -57,7 +65,7 @@ const App = () => {
             coordinates={coordinates}
             setCoordinates={setCoordinates}
             setBounds={setBounds}
-            places={places}
+            places={filteredPlaces.length ? filteredPlaces : places}
             setChildClicked={setChildClicked}
           />
         </Grid>
