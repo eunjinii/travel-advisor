@@ -7,8 +7,8 @@ const headers = {
   "Content-Type": "application/json",
 };
 
-export const getPlacesData = async (sw, ne) => {
-  const path = "/restaurants/list-in-boundary";
+export const getPlacesData = async (type, sw, ne) => {
+  const path = `/${type}/list-in-boundary`;
   try {
     const response = await axios.get(`${baseUrl}${path}`, {
       params: {

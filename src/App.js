@@ -11,9 +11,11 @@ const App = () => {
   const [bounds, setBounds] = useState(null); //{ne: { lat: 0, lng: 0 },sw: { lat: 0, lng: 0 },}
   const [childClicked, setChildClicked] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [type, setType] = useState("restaurants");
+  const [rating, setRating] = useState(0);
 
   const fetchPlacesData = async (sw, ne) => {
-    const data = await getPlacesData(sw, ne);
+    const data = await getPlacesData(type, sw, ne);
     setPlaces(data);
     setIsLoading(false);
   };
@@ -32,7 +34,7 @@ const App = () => {
     if (!bounds) return;
     setIsLoading(true);
     fetchPlacesData(bounds.sw, bounds.ne);
-  }, [bounds]);
+  }, [type, bounds]);
 
   return (
     <>
@@ -44,6 +46,10 @@ const App = () => {
             places={places}
             childClicked={childClicked}
             isLoading={isLoading}
+            type={type}
+            setType={setType}
+            rating={rating}
+            setRating={setRating} // not the best practice, react context recommanded
           />
         </Grid>
         <Grid item xs={12} md={8}>
