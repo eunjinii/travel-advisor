@@ -5,6 +5,7 @@ import LocationOnOutlinedIcon from "@material-ui/icons/LocationOnOutlined";
 import Rating from "@material-ui/lab/Rating";
 
 import useStyles from "./styles";
+import mapStyles from "./map-styles";
 
 const Map = ({
   coordinates,
@@ -16,6 +17,7 @@ const Map = ({
 }) => {
   const classes = useStyles();
   const isDesktop = useMediaQuery("(min-width:600px)");
+  const mapStyle = mapStyles;
   const isArray = (arr) => Array.isArray(arr) && arr.length > 0;
 
   return (
@@ -29,7 +31,11 @@ const Map = ({
         center={coordinates}
         defaultZoom={14}
         margin={[10, 10, 10, 10]}
-        // options={}
+        options={{
+          disableDefaultUI: true,
+          zoomControl: true,
+          styles: mapStyle,
+        }}
         onChange={(e) => {
           setCoordinates({ lat: e.center.lat, lng: e.center.lng });
           setBounds({ ne: e.marginBounds.ne, sw: e.marginBounds.sw });
@@ -86,6 +92,7 @@ const Map = ({
             <img
               src={`https://openweathermap.org/img/w/${data.icon}.png`}
               alt={data.description}
+              height="60px"
             />
           </div>
         ))}
